@@ -275,7 +275,7 @@ export default function Home() {
 
 
   return (
-    <div className={`w-screen min-h-full h-full duration-500 p-10 relative ${ darkTheme ? 'bg-black' : 'bg-gray-200' }`}>
+    <div className={`w-screen duration-500 p-10 relative ${ darkTheme ? 'bg-black' : 'bg-gray-200' }`}>
       <div className='flex flex-row justify-center gap-16 rte:flex-col rte:gap-1 rte:justify-start rte:items-center'>
       <div className={`container relative max-w-md max-h-min p-4 py-10 flex  rounded flex-col justify-start  items-center shadow-xl ${ darkTheme ? 'bg-gray-600' : 'bg-gray-300' } ${isPlaying && policeMode && 'animate-colorPulseRed'}`}>
         <div className={`absolute left-2 top-5 flex h-4 cursor-pointer w-16 border border-black  rounded-md ${isPlaying && 'animate-bounce'} ${policeMode && 'shadow-police'}`} onClick={()=>{setPoliceMode(!policeMode)}}>
