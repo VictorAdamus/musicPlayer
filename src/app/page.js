@@ -148,6 +148,34 @@ export default function Home() {
   const [currentTrack, setCurrentTrack] = useState(sounds[0])
   const [playlist, setPlaylist] = useState(false)
   const [darkTheme, setDarkTheme] = useState(false)
+  const [trackShuffle, setTrackShuffle] = useState(false)
+  const [policeMode, setPoliceMode] = useState(false)
+
+  const trackMix = (arr) => {
+    arr.sort((a,b)=>{
+      const valA = a['title'].toLowerCase();
+      const valB = b['title'].toLowerCase();
+
+      if(valA<valB) {
+        return -1;
+      }
+      if (valA>valB) {
+        return 1;
+      }
+      return 0;
+    })
+    setTracks(arr)
+    setTrackShuffle(!trackShuffle)
+  }
+
+  const trackMix1 = () => {
+    for(let i=tracks.length-1; i>0; i--) {
+      const j = Math.floor(Math.random()*(i+1));
+      [tracks[i], tracks[j]] = [tracks[j], tracks[i]]
+    }
+    setTracks(tracks)
+    setTrackShuffle(!trackShuffle)
+  }
 
   const PlayPause = () => {
     setIsPlaying(!isPlaying)
@@ -247,14 +275,19 @@ export default function Home() {
 
 
   return (
-    <div className={`w-screen min-h-full h-full p-10 mx-auto relative flex flex-row justify-center items-start gap-16 rte:flex-col rte:justify-start rte:items-center ${darkTheme? 'bg-black' : 'bg-gray-200'}`}>
-      <div className={`container max-w-md p-4 py-10 flex  rounded flex-col justify-center items-center shadow-xl ${darkTheme? 'bg-gray-600': 'bg-gray-300'}`}>
+    <div className={`w-screen min-h-full h-full duration-500 p-10 relative ${ darkTheme ? 'bg-black' : 'bg-gray-200' }`}>
+      <div className='flex flex-row justify-center gap-16 rte:flex-col rte:gap-1 rte:justify-start rte:items-center'>
+      <div className={`container relative max-w-md max-h-min p-4 py-10 flex  rounded flex-col justify-start  items-center shadow-xl ${ darkTheme ? 'bg-gray-600' : 'bg-gray-300' } ${isPlaying && policeMode && 'animate-colorPulseRed'}`}>
+        <div className={`absolute left-2 top-2 flex h-4 cursor-pointer w-16 border border-black  rounded-md ${isPlaying && 'animate-bounce'} ${policeMode && 'shadow-police'}`} onClick={()=>{setPoliceMode(!policeMode)}}>
+          <div className='w-1/2 border-r border-black rounded-s-md h-full bg-blue-600'></div>
+          <div className='w-1/2 border-l border-black rounded-e-md h-full bg-red-600'></div>
+        </div>
         <div className='text-sm mb-4'>Now Playing</div>
         <div className={`rounded-full w-40 h-40 bg-black flex flex-col items-center justify-center relative ${ isPlaying && 'animate-lazySpin' }`}>
           <Image className='rounded-full' src={currentTrack?.img} alt='track' width={130} height={130} />
-          <div className='rounded-full w-8 h-8 bg-gray-300 absolute border border-black'></div>
+          <div className={`rounded-full w-8 h-8  absolute border border-black ${darkTheme ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
         </div>
-        <div className='relative overflow-hidden'>
+        <div className='relative overflow-hidden w-2/3'>
           <div className={`text-black mt-12 text-xl ${ isPlaying && 'animate-wiggle' }`}>{currentTrack.title}</div>
         </div>
         <audio ref={trackRef} src={currentTrack.src} type='audio/mp3' onTimeUpdate={onPlaying} onEnded={nextTrack} />
@@ -279,24 +312,30 @@ export default function Home() {
           </button>
         </div>
       </div>
-      <div className='w-96'>
+      <div className={`container max-w-md p-4 pb-10 flex  rounded flex-col justify-start items-center shadow-xl ${ darkTheme ? 'bg-gray-600' : 'bg-gray-300'} ${isPlaying && policeMode && 'animate-colorPulseBlue'}`}>
         <button className={`border-b-2 border-gray-500 mt-2 opacity-60 ${ playlist ? 'text-red-800' : 'text-green-700' }`} onClick={() => {setPlaylist(!playlist)}}>{playlist ? 'Hide Playlist' : 'Show Playlist'}</button>
-        {playlist ? (<div className='container max-w-md mx-auto mt-6 p4 grid gap-4 max-h-96 overflow-y-scroll'>
+        {playlist && (<div className={`border border-gray-500  mt-2 cursor-pointer flex items-center gap-2 justify-center w-fit p-2 ${darkTheme && 'bg-gray-600'}`}>
+         <Image src='/icons/aA.png' alt='alphabet' width='20' height='20' onClick={()=>{trackMix(tracks)}} />
+        <Image src='/icons/mix.png' alt='alphabet' width='20' height='20' onClick={trackMix1} />
+        </div>)}
+        {playlist ? (<div className='container max-w-md mx-auto mt-6 grid gap-4 max-h-80 overflow-y-scroll'>
 
           {tracks?.map((track) => (
-            <p className={`flex items-center gap-4 cursor-pointer ${darkTheme? 'text-white' : 'text-black'} text-xs hover:opacity-30 ${ track.title === currentTrack.title ? 'animate-bounce' : '' }`} onClick={(e) => {findTrack(e.currentTarget, sounds)}} key={track.id}><Image src={track.img} alt={track.author} width={50} height={50}></Image>{track.title}</p>
+            <p className={`flex items-center gap-4 cursor-pointer ${ darkTheme ? 'text-white' : 'text-black' } text-xs hover:opacity-30 ${ track.title === currentTrack.title ? 'animate-bounce font-bold' : '' }`} onClick={(e) => {findTrack(e.currentTarget, sounds)}} key={track.id}><Image src={track.img} alt={track.author} width={50} height={50}></Image>{track.title}</p>
           ))}
-        </div>) : (<div className="flex w-full h-96 justify-between items-end">
-          <div className={`w-16 h-1 bg-green-500 opacity-30 ${ isPlaying && 'animate-upDown1' }`}></div>
-          <div className={`w-16 bg-red-400 h-1 opacity-30 ${ isPlaying && 'animate-upDown2' }`}></div>
-          <div className={`w-16 bg-violet-400 h-1 opacity-30 ${ isPlaying && 'animate-upDown3' }`}></div>
-          <div className={`w-16 bg-blue-400 h-1 opacity-30 ${ isPlaying && 'animate-upDown4' }`}></div>
-          <div className={`w-16 bg-orange-400 h-1 opacity-30 ${ isPlaying && 'animate-upDown5' }`}></div>
+        </div>) : (<div className="flex w-full h-96 justify-start items-end gap-1">
+          <div className={`w-1/6 h-1 bg-gradient-to-r from-fuchsia-400 via-purple-600 to-violet-500 shadow-2xl shadow-fuchsia-400 ${ isPlaying && 'animate-upDown1' }`}></div>
+          <div className={`w-1/6 h-1 bg-gradient-to-r from-lime-300 via-green-500 to-emerald-500 shadow-2xl shadow-lime-400 ${ isPlaying && 'animate-upDown2' }`}></div>
+          <div className={`w-1/6 h-1 bg-gradient-to-r from-teal-300 via-cyan-500 to-sky-400 shadow-2xl shadow-teal-300 ${ isPlaying && 'animate-upDown3' }`}></div>
+          <div className={`w-1/6 h-1 bg-gradient-to-r from-pink-400 via-rose-500 to-fuchsia-600 shadow-2xl shadow-pink-300 ${ isPlaying && 'animate-upDown4' }`}></div>
+          <div className={`w-1/6 h-1 bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-400 shadow-2xl shadow-yellow-300 ${ isPlaying && 'animate-upDown5' }`}></div>
+          <div className={`w-1/6 h-1 bg-gradient-to-r from-fuchsia-400 via-purple-600 to-violet-500 shadow-2xl shadow-fuchsia-400 ${ isPlaying && 'animate-upDown1' }`}></div>
         </div>)}
 
       </div>
-      <div className={`w-10 h-10 cursor-pointer absolute right-10 top-10 duration-200 hover:scale-110 ${isPlaying && 'animate-bounce'}`} onClick={()=>{setDarkTheme(!darkTheme)}}>
-            {darkTheme? <Image src='/icons/moon.png' alt='dark-theme' width='40' height='40'/> : <Image src='/icons/day.png' alt='light theme' width='40' height='40' />}
+      <div className={`w-10 h-10 cursor-pointer absolute right-10 top-12 duration-200 hover:scale-110 ${ isPlaying && 'animate-bounce' }`} onClick={() => {setDarkTheme(!darkTheme)}}>
+        {darkTheme ? <Image src='/icons/moon.png' alt='dark-theme' width='40' height='40' /> : <Image src='/icons/day.png' alt='light theme' width='40' height='40' />}
+      </div>
       </div>
     </div>
   )
