@@ -314,7 +314,7 @@ export default function Home() {
       </div>
       <div className={`container max-w-md p-4 pb-10 flex  rounded flex-col justify-start items-center shadow-xl ${ darkTheme ? 'bg-gray-600' : 'bg-gray-300'} ${isPlaying && policeMode && 'animate-colorPulseBlue'}`}>
         <button className={`border-b-2 border-gray-500 mt-2 opacity-60 ${ playlist ? 'text-red-800' : 'text-green-700' }`} onClick={() => {setPlaylist(!playlist)}}>{playlist ? 'Hide Playlist' : 'Show Playlist'}</button>
-        {playlist && (<div className={`border border-gray-500  mt-2 cursor-pointer flex items-center gap-2 justify-center w-fit p-2 ${darkTheme && 'bg-gray-600'}`}>
+        {playlist && (<div className={`border border-gray-500  mt-2 cursor-pointer flex items-center gap-8 justify-center w-fit p-2 ${darkTheme && 'bg-gray-600'}`}>
          <Image src='/icons/aA.png' alt='alphabet' width='20' height='20' onClick={()=>{trackMix(tracks)}} />
         <Image src='/icons/mix.png' alt='alphabet' width='20' height='20' onClick={trackMix1} />
         </div>)}
