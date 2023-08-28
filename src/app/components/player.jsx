@@ -3,7 +3,7 @@ import pauseImg from '../img/pause.png'
 import prevImg from '../img/prev.png'
 import playImg from '../img/play.png'
 import {useEffect, useRef} from 'react'
-import {useSwipeable} from 'react-swipeable'
+import { useSwipeable } from 'react-swipeable'
 
 import {useSelector, useDispatch} from 'react-redux'
 import {setCurrentTrack, setPlay, setPause} from '../features/player/playerSlice'
@@ -15,8 +15,8 @@ import {setPoliceMode} from '../features/music/musicSlice'
 function Player() {
 
   const handler = useSwipeable({
-    onSwipedLeft: ()=>{prevTrack},
-    onSwipedRight: ()=>{nextTrack}
+    onSwipedLeft: ()=>{prevTrack()},
+    onSwipedRight: ()=>{nextTrack()}
   })
 
 
@@ -26,6 +26,7 @@ function Player() {
   const policeMode = useSelector(state => state.music.policeMode)
   const darkTheme = useSelector(state => state.theme.darkTheme)
   const sounds = useSelector(state => state.player.tracks)
+
   const dispatch = useDispatch()
 
 
@@ -50,7 +51,7 @@ function Player() {
     secRefStart.current.textContent = trackSec(trackRef.current.currentTime)
     minRefEnd.current.textContent = trackMin(trackRef.current.duration)
     secRefEnd.current.textContent = trackSec(trackRef.current.duration)
-  },)
+  },[currentTrack])
 
 
   const prevTrack = () => {
@@ -128,6 +129,7 @@ function Player() {
       trackRef.current.pause();
     }
   }, [isPlaying, currentTrack])
+
 
   return (
       <div {...handler} style={{ overflowX: "scroll" }}  className={`container relative max-w-md max-h-min p-4 py-10 flex  rounded flex-col justify-start  items-center shadow-xl ${ darkTheme ? 'bg-gray-600' : 'bg-gray-300' } ${ isPlaying && policeMode && 'animate-colorPulseRed' }`}>
