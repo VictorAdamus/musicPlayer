@@ -13,21 +13,27 @@ import { setPoliceMode } from '../features/music/musicSlice'
 
 function Player() {
 
-const [position, setPosition] = useState(0)
+const [positionX, setPositionX] = useState(0)
 
 const handleTouchStart = (e) => {
-  setPosition(e.touches[0].clientX)
+  setPositionX(e.touches[0].clientX)
 }
 
 const handleTouchMove = (e)=> {
-  const currentPosition = e.touches[0].clientX
-  const delta = currentPosition - position
+  const currentPositionX = e.touches[0].clientX
 
-  if (delta >=50) {
-    nextTrack()
-  } else if (delta <= 50) {
-    prevTrack()
+  if(positionX && currentPositionX) {
+
+    const differentX = positionX - currentPositionX
+
+    if (differentX > 100) {
+      nextTrack()
+    } else if (differentX < -100) {
+      prevTrack()
+    }
+
   }
+
 }
 
   const isPlaying = useSelector(state => state.player.isPlaying)
