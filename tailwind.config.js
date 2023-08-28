@@ -27,6 +27,12 @@ module.exports = {
       boxShadow: {
         'police': '10px 0px 20px 0px red, -10px 0px 20px 0px blue'
       },
+      // invert: {
+      //   60: '.6',
+      // },
+      // sepia: {
+      //   20: '.2',
+      // },
       keyframes: {
         wiggle: {
           '0%': { transform: 'translateX(-100%)' },
