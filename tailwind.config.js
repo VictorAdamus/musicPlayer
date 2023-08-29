@@ -27,12 +27,16 @@ module.exports = {
       boxShadow: {
         'police': '10px 0px 20px 0px red, -10px 0px 20px 0px blue'
       },
-      // invert: {
-      //   60: '.6',
-      // },
-      // sepia: {
-      //   20: '.2',
-      // },
+      gradientColorStops: {
+        'my-gradient': {
+          'circle': 'rgba(12,12,15,1) 10%',
+          '22': 'rgba(44,37,84,1) 22%',
+          '33': 'rgba(54,24,91,1) 33%',
+          '44': 'rgba(84,28,98,1) 44%',
+          '60': 'rgba(64,17,80,1) 60%',
+        },
+
+      },
       keyframes: {
         wiggle: {
           '0%': { transform: 'translateX(-100%)' },
@@ -44,7 +48,7 @@ module.exports = {
         },
         upDown: {
           '0%': {height: '0'},
-          '100%': {height: '340px'}
+          '100%': {height: '40px'}
         },
         colorPulseRed: {
           '0%': {boxShadow: '0 0 0 0 rgba(255, 0, 0, 0.4)'},
@@ -70,5 +74,7 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
 }

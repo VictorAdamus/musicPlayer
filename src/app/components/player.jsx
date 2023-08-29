@@ -3,29 +3,27 @@ import pauseImg from '../img/pause.png'
 import prevImg from '../img/prev.png'
 import playImg from '../img/play.png'
 import {useEffect, useRef} from 'react'
-import { useSwipeable } from 'react-swipeable'
+import {useSwipeable} from 'react-swipeable'
 
 import {useSelector, useDispatch} from 'react-redux'
-import {setCurrentTrack, setPlay, setPause} from '../features/player/playerSlice'
-import {setPoliceMode} from '../features/music/musicSlice'
-
+import {setCurrentTrack, setPlay, setPause, setPlaylist} from '../features/player/playerSlice'
+import Playlist from '../Playlist'
 
 
 
 function Player() {
 
   const handler = useSwipeable({
-    onSwipedLeft: ()=>{prevTrack()},
-    onSwipedRight: ()=>{nextTrack()}
+    onSwipedLeft: () => {nextTrack()},
+    onSwipedRight: () => {prevTrack()}
   })
 
 
 
   const isPlaying = useSelector(state => state.player.isPlaying)
   const currentTrack = useSelector(state => state.player.currentTrack)
-  const policeMode = useSelector(state => state.music.policeMode)
-  const darkTheme = useSelector(state => state.theme.darkTheme)
   const sounds = useSelector(state => state.player.tracks)
+  const playlist = useSelector((state) => state.player.playlist)
 
   const dispatch = useDispatch()
 
@@ -51,7 +49,7 @@ function Player() {
     secRefStart.current.textContent = trackSec(trackRef.current.currentTime)
     minRefEnd.current.textContent = trackMin(trackRef.current.duration)
     secRefEnd.current.textContent = trackSec(trackRef.current.duration)
-  },[currentTrack])
+  }, [currentTrack])
 
 
   const prevTrack = () => {
@@ -87,6 +85,10 @@ function Player() {
 
   }
 
+  const playlistToogle = () => {
+    dispatch(setPlaylist())
+  }
+
   const checkWidth = (e) => {
     let width = clickRef.current.clientWidth
     const offset = e.nativeEvent.offsetX
@@ -118,10 +120,6 @@ function Player() {
     return minutes
   }
 
-  const policeModeToogle = () => {
-    dispatch(setPoliceMode())
-  }
-
   useEffect(() => {
     if (isPlaying) {
       trackRef.current.play();
@@ -132,42 +130,66 @@ function Player() {
 
 
   return (
-      <div {...handler} style={{ overflowX: "scroll" }}  className={`container relative max-w-md max-h-min p-4 py-10 flex  rounded flex-col justify-start  items-center shadow-xl ${ darkTheme ? 'bg-gray-600' : 'bg-gray-300' } ${ isPlaying && policeMode && 'animate-colorPulseRed' }`}>
-        <div className={`absolute left-2 top-5 flex h-4 cursor-pointer w-16 border border-black  rounded-md ${ isPlaying && 'animate-bounce' } ${ policeMode && 'shadow-police' }`} onClick={policeModeToogle}>
-          <div className='w-1/2 border-r border-black rounded-s-md h-full bg-blue-600'></div>
-          <div className='w-1/2 border-l border-black rounded-e-md h-full bg-red-600'></div>
+    <div {...handler} style={{overflowX: "scroll"}} className={` h-screen relative w-full max-h-min p-4 py-10 pb-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-400 from-5% via-indigo-800  via-40%  to-black to-80% flex flex-col justify-between  items-center shadow-xl`}>
+
+      <div className='text-sm mb-4'>Now Playing</div>
+      <div className={`rounded-full w-52 h-52 bg-black flex flex-col items-center justify-center relative ${ isPlaying && 'animate-lazySpin' }`}>
+        <Image className='rounded-full' src={currentTrack.img} alt={currentTrack.author} width={160} height={160} />
+        <div className={`rounded-full w-8 h-8  absolute border border-black bg-purple-200`}></div>
+      </div>
+      <div className='w-2/3 mt-24'>
+        <div className={`text-slate-400 text-md text-center ${ isPlaying && 'animate-bounce' }`}>{currentTrack.title}</div>
+      </div>
+      <audio ref={trackRef} src={currentTrack.src} type='audio/mp3' onTimeUpdate={onPlaying} onEnded={nextTrack} />
+      <div className='w-10/12 flex flex-col'>
+        <div className="flex w-full h-12 justify-start items-end gap-1 mb-4">
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-fuchsia-400 via-purple-600 to-violet-500 shadow-2xl shadow-fuchsia-400 ${ isPlaying && 'animate-upDown1' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-lime-300 via-green-500 to-emerald-500 shadow-2xl shadow-lime-400 ${ isPlaying && 'animate-upDown2' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-teal-300 via-cyan-500 to-sky-400 shadow-2xl shadow-teal-300 ${ isPlaying && 'animate-upDown3' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-pink-400 via-rose-500 to-fuchsia-600 shadow-2xl shadow-pink-300 ${ isPlaying && 'animate-upDown4' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-400 shadow-2xl shadow-yellow-300 ${ isPlaying && 'animate-upDown5' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-fuchsia-400 via-purple-600 to-violet-500 shadow-2xl shadow-fuchsia-400 ${ isPlaying && 'animate-upDown1' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-fuchsia-400 via-purple-600 to-violet-500 shadow-2xl shadow-fuchsia-400 ${ isPlaying && 'animate-upDown1' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-lime-300 via-green-500 to-emerald-500 shadow-2xl shadow-lime-400 ${ isPlaying && 'animate-upDown2' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-teal-300 via-cyan-500 to-sky-400 shadow-2xl shadow-teal-300 ${ isPlaying && 'animate-upDown3' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-pink-400 via-rose-500 to-fuchsia-600 shadow-2xl shadow-pink-300 ${ isPlaying && 'animate-upDown4' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-400 shadow-2xl shadow-yellow-300 ${ isPlaying && 'animate-upDown5' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-fuchsia-400 via-purple-600 to-violet-500 shadow-2xl shadow-fuchsia-400 ${ isPlaying && 'animate-upDown1' }`}></div>
         </div>
-        <div className='text-sm mb-4'>Now Playing</div>
-        <div className={`rounded-full w-40 h-40 bg-black flex flex-col items-center justify-center relative ${ isPlaying && 'animate-lazySpin' }`}>
-          <Image className='rounded-full' src={currentTrack?.img} alt='track' width={130} height={130} />
-          <div className={`rounded-full w-8 h-8  absolute border border-black ${ darkTheme ? 'bg-gray-600' : 'bg-gray-300' }`}></div>
+        <div className='flex h-1 bg-gray-600 rounded-lg items-center justify-start cursor-pointer' onClick={checkWidth} ref={clickRef} >
+          <div className='h-1 bg-sky-700 rounded-lg opacity-100 relative' style={{width: `${ currentTrack.progress + '%' }`}}>
+            <div className='rounded-full w-4 h-4 absolute end-0 top-[-6px] bg-white'></div>
+          </div>
         </div>
-        <div className='relative overflow-hidden w-2/3'>
-          <div className={`text-black mt-12 text-md ${ isPlaying && 'animate-wiggle' }`}>{currentTrack.title}</div>
-        </div>
-        <audio ref={trackRef} src={currentTrack.src} type='audio/mp3' onTimeUpdate={onPlaying} onEnded={nextTrack} />
-        <div className='flex mt-2 justify-between w-10/12'>
+        <div className='flex justify-between mt-2 text-slate-400'>
           <p><span ref={minRefStart}></span>:<span ref={secRefStart}></span></p>
           <p><span ref={minRefEnd}></span>:<span ref={secRefEnd}></span></p>
         </div>
-        <div className='w-10/12 h-2 bg-gray-500 rounded-lg mt-2 flex items-center justify-start cursor-pointer opacity-60' onClick={checkWidth} ref={clickRef} >
-          <div className='h-2 bg-black rounded-lg' style={{width: `${ currentTrack.progress + '%' }`}}></div>
-        </div>
-        <div className='flex w-full items-center justify-between mt-10 px-10'>
-          <button className='cursor-pointer p-0 w-16 h-16 duration-200 hover:scale-110 active:opacity-50' onClick={prevTrack}>
-            <Image src={prevImg} alt='prev track' />
-          </button>
-          <button className='cursor-pointer p-0 w-16 h-16 duration-200 hover:scale-110 active:opacity-50'>
-
-            {isPlaying ? <Image onClick={setPaused} src={pauseImg} alt='pause' /> : <Image onClick={setPlaying} src={playImg} alt='play' />}
-
-          </button>
-          <button className='cursor-pointer p-0 w-16 h-16 duration-200 hover:scale-110 active:opacity-50' onClick={nextTrack}>
-            <Image className='rotate-180' src={prevImg} alt='next track' />
-          </button>
-        </div>
       </div>
+      <div className='flex w-full items-center max-w-md justify-between mt-8 mb-4 px-10'>
+        <button className='opacity-60  cursor-pointer p-0 w-16 h-16 duration-200 hover:scale-110 active:opacity-50' onClick={prevTrack}>
+          <Image className='invert' src={prevImg} alt='prev track' />
+        </button>
+        <button className='opacity-60 cursor-pointer p-0 w-20 h-20 rounded-full bg-gradient-to-r from-blue-400 from-5% via-blue-800 via-40% to-gray-900 to-90% duration-200 flex items-center justify-center hover:scale-110 active:opacity-50'>
+
+          {isPlaying ? <Image className='invert' onClick={setPaused} src={pauseImg} alt='pause' width='56' height='auto' /> : <Image className='invert' onClick={setPlaying} src={playImg} alt='play' width='56' height='auto' />}
+
+        </button>
+        <button className='opacity-60  cursor-pointer p-0 w-16 h-16 duration-200 hover:scale-110 active:opacity-50' onClick={nextTrack}>
+          <Image className='rotate-180 invert' src={prevImg} alt='next track' />
+        </button>
+      </div>
+      <div className='flex flex-col items-center justify-center bg-gradient-to-r z-10 from-slate-900 via-blue-900 to-slate-900 w-32 h-12 rounded-t-xl bg-lime-300 cursor-pointer' onClick={playlistToogle}>
+        <span className='w-12 h-[2px] bg-slate-500 mb-1'></span>
+        <span className='w-12 h-[2px] bg-slate-500'></span>
+        <p className='text-slate-400 duration-300 hover:scale-110'>{playlist? 'close' : 'playlist'}</p>
+      </div>
+      <Playlist />
+    </div>
   )
 }
 
 export default Player
+
+
+

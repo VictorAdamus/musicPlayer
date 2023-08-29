@@ -9,8 +9,8 @@ const initialState = {
     tracks: sounds,
     mixFavoriteTrack: false,
     mixStartTrack: true,
-    mixRandomTrack: false
-
+    mixRandomTrack: false,
+    favoriteTracks: [],
 }
 
 export const playerSlice = createSlice({
@@ -33,39 +33,34 @@ export const playerSlice = createSlice({
             state.mixFavoriteTrack = false
             state.mixStartTrack = false
             state.mixRandomTrack = true
-            const soundArr = state.originalTracks? state.originalTracks.slice() : state.tracks;
+            const soundArr = state.tracks.slice()
             for (let i = soundArr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [soundArr[i], soundArr[j]] = [soundArr[j], soundArr[i]]
             }
-            console.log(`mix :  ${ state.tracks }`);
             state.tracks = soundArr;
         },
         setTracksStart: (state) => {
             state.mixFavoriteTrack = false;
             state.mixStartTrack = true
             state.mixRandomTrack = false
-            state.tracks = state.originalTracks? state.originalTracks.slice() : state.tracks; 
-            state.tracks.sort((a, b) => (a.title > b.title ? 1 : -1));
-
-
+            state.tracks = state.tracks.sort((a, b) => (a.title > b.title ? 1 : -1));
         },
         setTracksFavorite: (state) => {
             state.mixFavoriteTrack = true;
             state.mixStartTrack = false
             state.mixRandomTrack = false
-            state.originalTracks = state.tracks.slice(); 
-            const soundArr = state.tracks.filter((item) => item.favorite === true);
-            state.tracks = soundArr;
         },
         addToFavoriteTrack: (state, action) => {
-            const item = state.tracks.find(track => track.id === action.payload)
-            if (item) {
-                item.favorite = !item.favorite;
-            }
-        }
+            state.tracks.map(track => {track.id === action.payload ? track.favorite = true : ''})
+            state.favoriteTracks = state.tracks.filter((track)=> track.favorite)
+        },
+        removeFavoriteTrack: (state, action)=>{
+           state.tracks.map(track => {track.id === action.payload ? track.favorite = false : ''})
+           state.favoriteTracks = state.tracks.filter((track)=> track.favorite)
+        },
     }
 })
 
-export const {setPlaylist, setCurrentTrack, setPlay, setPause, setTracksMix, setTracksStart, setTracksFavorite, addToFavoriteTrack} = playerSlice.actions
+export const {setPlaylist, setCurrentTrack, setPlay, setPause, setTracksMix, setTracksStart, setTracksFavorite, addToFavoriteTrack, removeFavoriteTrack} = playerSlice.actions
 export default playerSlice.reducer
