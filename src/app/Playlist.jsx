@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import {useDispatch, useSelector} from 'react-redux'
-import { useEffect } from 'react'
 import {setCurrentTrack, setPlay, setTracksMix, setTracksStart, setTracksFavorite, addToFavoriteTrack, removeFavoriteTrack} from './features/player/playerSlice'
 
 import favoriteTrackOn from '../../public/icons/favoriteOn.png'
@@ -15,9 +14,9 @@ function Playlist() {
   const currentTrack = useSelector((state) => state.player.currentTrack)
   const tracks = useSelector((state) => state.player.tracks)
   const playlist = useSelector((state) => state.player.playlist)
-  const mixFavoriteTrack = useSelector((state) => state.player.mixFavoriteTrack)
   const mixStartTrack = useSelector((state) => state.player.mixStartTrack)
   const mixRandomTrack = useSelector((state) => state.player.mixRandomTrack)
+  const mixFavoriteTrack = useSelector((state) => state.player.mixFavoriteTrack)
   const favoriteTracks = useSelector((state)=> state.player.favoriteTracks)
 
   const dispatch = useDispatch()
@@ -42,10 +41,6 @@ function Playlist() {
   const removeTrackFavorite = (itemId)=>{
     dispatch(removeFavoriteTrack(itemId))
   }
-
-  console.log(favoriteTracks);
-
-
 
   const findTrack = (element, arr) => {
     const title = element.textContent;

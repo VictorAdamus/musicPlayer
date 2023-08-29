@@ -24,6 +24,9 @@ function Player() {
   const currentTrack = useSelector(state => state.player.currentTrack)
   const sounds = useSelector(state => state.player.tracks)
   const playlist = useSelector((state) => state.player.playlist)
+  const mixFavoriteTrack = useSelector((state) => state.player.mixFavoriteTrack)
+  const favoriteTracks = useSelector((state)=> state.player.favoriteTracks)
+
 
   const dispatch = useDispatch()
 
@@ -53,12 +56,13 @@ function Player() {
 
 
   const prevTrack = () => {
-    const indexTrack = sounds.findIndex(sound => sound.title == currentTrack.title)
+    const tracks = (mixFavoriteTrack ? favoriteTracks : sounds)
+    const indexTrack = tracks.findIndex(tracks => tracks.title == currentTrack.title)
     if (indexTrack == 0) {
-      dispatch(setCurrentTrack(sounds[sounds.length - 1]))
+      dispatch(setCurrentTrack(tracks[tracks.length - 1]))
     } else {
 
-      dispatch(setCurrentTrack(sounds[indexTrack - 1]))
+      dispatch(setCurrentTrack(tracks[indexTrack - 1]))
     }
 
     trackRef.current.currentTime = 0;
@@ -66,11 +70,13 @@ function Player() {
   }
 
   const nextTrack = () => {
-    const indexTrack = sounds.findIndex(sound => sound.title == currentTrack.title)
-    if (indexTrack == sounds.length - 1) {
-      dispatch(setCurrentTrack(sounds[0]))
+    const tracks = (mixFavoriteTrack ? favoriteTracks : sounds)
+    console.log(tracks);
+    const indexTrack = tracks.findIndex(tracks => tracks.title == currentTrack.title)
+    if (indexTrack == tracks.length - 1) {
+      dispatch(setCurrentTrack(tracks[0]))
     } else {
-      dispatch(setCurrentTrack(sounds[indexTrack + 1]))
+      dispatch(setCurrentTrack(tracks[indexTrack + 1]))
     }
 
     trackRef.current.currentTime = 0;
