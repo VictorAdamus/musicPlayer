@@ -71,7 +71,6 @@ function Player() {
 
   const nextTrack = () => {
     const tracks = (mixFavoriteTrack ? favoriteTracks : sounds)
-    console.log(tracks);
     const indexTrack = tracks.findIndex(tracks => tracks.title == currentTrack.title)
     if (indexTrack == tracks.length - 1) {
       dispatch(setCurrentTrack(tracks[0]))

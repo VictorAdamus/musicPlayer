@@ -51,7 +51,8 @@ function Playlist() {
     const index = arr.findIndex(item => item.title === title)
     dispatch(setCurrentTrack(tracks[index]))
     setPlaying()
-    playlistToggle()
+    setTimeout(()=>{playlistToggle()}, 3000)
+    
   }
 
   return (
