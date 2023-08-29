@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import {useDispatch, useSelector} from 'react-redux'
-import {setCurrentTrack, setPlay, setTracksMix, setTracksStart, setTracksFavorite, addToFavoriteTrack, removeFavoriteTrack} from './features/player/playerSlice'
+import {setCurrentTrack, setPlay, setTracksMix, setTracksStart, setTracksFavorite, addToFavoriteTrack, removeFavoriteTrack, setPlaylist} from './features/player/playerSlice'
 
 import favoriteTrackOn from '../../public/icons/favoriteOn.png'
 import favoriteTrackOff from '../../public/icons/favoriteOff.png'
@@ -34,6 +34,10 @@ function Playlist() {
     dispatch(setTracksStart())
   }
 
+  const playlistToggle = () => {
+    dispatch(setPlaylist())
+  }
+
   const addTrackFavorite = (itemId) => {
     dispatch(addToFavoriteTrack(itemId))
   }
@@ -47,7 +51,7 @@ function Playlist() {
     const index = arr.findIndex(item => item.title === title)
     dispatch(setCurrentTrack(tracks[index]))
     setPlaying()
-    // playlistToogle()
+    playlistToggle()
   }
 
   return (
