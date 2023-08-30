@@ -1,7 +1,7 @@
 export const sounds = [
     {
       author: '50 Cent, Olivia',
-      title: '50 Cent, Olivia – Candy Shop',
+      title: 'Candy Shop',
       src: '/audio/50 Cent, Olivia – Candy Shop.mp3',
       id: 1,
       img: '/img/50 Cent, Olivia – Candy Shop.jpg',
@@ -9,7 +9,7 @@ export const sounds = [
     },
     {
       author: 'Akon, Eminem',
-      title: 'Akon, Eminem – Smack That',
+      title: 'Smack That',
       src: '/audio/Akon, Eminem – Smack That.mp3',
       id: 2,
       img: '/img/Akon, Eminem – Smack That.jpg',
@@ -17,7 +17,7 @@ export const sounds = [
     },
     {
       author: 'Alan Walker',
-      title: 'Alan Walker – Faded',
+      title: 'Faded',
       src: '/audio/Alan Walker – Faded.mp3',
       id: 3,
       img: '/img/Alan Walker – Faded.png',
@@ -25,7 +25,7 @@ export const sounds = [
     },
     {
       author: 'Alec Benjamin',
-      title: 'Alec Benjamin – Let Me Down Slowly',
+      title: 'Let Me Down Slowly',
       src: '/audio/Alec Benjamin – Let Me Down Slowly.mp3',
       id: 4,
       img: '/img/Alec Benjamin – Let Me Down Slowly.jpg',
@@ -33,7 +33,7 @@ export const sounds = [
     },
     {
       author: 'Ed Sheeran',
-      title: 'Ed Sheeran – Shape of You',
+      title: 'Shape of You',
       src: '/audio/Ed Sheeran – Shape of You.mp3',
       id: 5,
       img: '/img/Ed Sheeran – Shape of You.jpg',
@@ -41,7 +41,7 @@ export const sounds = [
     },
     {
       author: 'Eminem',
-      title: 'Eminem – Mockingbird',
+      title: 'Mockingbird',
       src: '/audio/Eminem – Mockingbird.mp3',
       id: 6,
       img: '/img/Eminem – Mockingbird.jpg',
@@ -49,7 +49,7 @@ export const sounds = [
     },
     {
       author: 'Eminem',
-      title: 'Eminem – Not Afraid',
+      title: 'Not Afraid',
       src: '/audio/Eminem – Not Afraid.mp3',
       id: 7,
       img: '/img/Eminem – Not Afraid.jpg',
@@ -57,7 +57,7 @@ export const sounds = [
     },
     {
       author: 'Eminem, Rihanna',
-      title: 'Eminem, Rihanna – Love The Way You Lie',
+      title: 'Love The Way You Lie',
       src: '/audio/Eminem, Rihanna – Love The Way You Lie.mp3',
       id: 8,
       img: '/img/Eminem, Rihanna – Love The Way You Lie.jpg',
@@ -65,7 +65,7 @@ export const sounds = [
     },
     {
       author: 'Enrique Iglesias',
-      title: 'Enrique Iglesias – Ring My Bells',
+      title: 'Ring My Bells',
       src: '/audio/Enrique Iglesias – Ring My Bells.mp3',
       id: 9,
       img: '/img/Enrique Iglesias – Ring My Bells.png',
@@ -73,7 +73,7 @@ export const sounds = [
     },
     {
       author: 'Europe',
-      title: 'Europe – The Final Countdown',
+      title: 'The Final Countdown',
       src: '/audio/Europe – The Final Countdown.mp3',
       id: 10,
       img: '/img/Europe – The Final Countdown.jpg',
@@ -81,7 +81,7 @@ export const sounds = [
     },
     {
       author: 'Evanescence',
-      title: 'Evanescence – Bring Me To Life',
+      title: 'Bring Me To Life',
       src: '/audio/Evanescence – Bring Me To Life.mp3',
       id: 11,
       img: '/img/Evanescence – Bring Me To Life.jpg',
@@ -89,7 +89,7 @@ export const sounds = [
     },
     {
       author: 'Inna',
-      title: 'Inna – Hot',
+      title: 'Hot',
       src: '/audio/Inna – Hot.mp3',
       id: 12,
       img: '/img/Inna – Hot.jpg',
@@ -97,7 +97,7 @@ export const sounds = [
     },
     {
       author: 'Nelly Furtado',
-      title: 'Nelly Furtado – Say It Right',
+      title: 'Say It Right',
       src: '/audio/Nelly Furtado – Say It Right.mp3',
       id: 13,
       img: '/img/Nelly Furtado – Say It Right.webp',
@@ -105,7 +105,7 @@ export const sounds = [
     },
     {
       author: 'Rammstein',
-      title: 'Rammstein – DU HAST',
+      title: 'Du hast',
       src: '/audio/Rammstein – DU HAST.mp3',
       id: 14,
       img: '/img/Rammstein – DU HAST.jpg',
@@ -113,7 +113,7 @@ export const sounds = [
     },
     {
       author: 'Rihanna',
-      title: 'Rihanna – Diamonds',
+      title: 'Diamonds',
       src: '/audio/Rihanna – Diamonds.mp3',
       id: 15,
       img: '/img/Rihanna – Diamonds.jpg',
@@ -121,7 +121,7 @@ export const sounds = [
     },
     {
       author: 'The Black Eyed Peas',
-      title: 'The Black Eyed Peas – My Humps',
+      title: 'My Humps',
       src: '/audio/The Black Eyed Peas – My Humps.mp3',
       id: 16,
       img: '/img/The Black Eyed Peas – My Humps.jpg',
@@ -129,7 +129,7 @@ export const sounds = [
     },
     {
       author: 'Usher, Lil Jon, Ludacris',
-      title: 'Usher, Lil Jon, Ludacris – Yeah!',
+      title: 'Yeah!',
       src: '/audio/Usher, Lil Jon, Ludacris – Yeah!.mp3',
       id: 17,
       img: '/img/Usher, Lil Jon, Ludacris – Yeah!.webp',

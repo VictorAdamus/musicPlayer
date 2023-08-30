@@ -15,11 +15,31 @@ import Playlist from './components/Playlist'
 
 function Player() {
 
+  const playListRef = useRef()
+
+
   const handler = useSwipeable({
     onSwipedLeft: () => {nextTrack()},
     onSwipedRight: () => {prevTrack()},
-    onSwipedDown: ()=>{playlistToogle(true)},
+    onSwipedDown: ()=>{
+      playlistToogle(true)
+    },
+    onSwipedUp: (eventData)=>{
+      if(eventData.event.target.id !== '000') {
+        playlistToogle(false)
+      }
+    }
   })
+
+
+
+      // if(eventData.event.target !== playListRef.current) {
+      //   playlistToogle(false)
+      //   console.log(eventData.event.target !== playListRef.current);
+      //   console.log('swipe');
+      // }
+
+
 
 
   const isPlaying = useSelector(state => state.player.isPlaying)
@@ -162,15 +182,16 @@ function Player() {
     <div {...handler} style={{overflowX: "scroll"}} className={`h-[100%] min-h-[100vh] relative w-[100%] ${ color } py-0 pb-10 flex flex-col justify-between  items-center shadow-xl`}>
       <div className='flex flex-col items-center justify-center gap-1 shadow-2xl shadow-black bg-slate-800/50 w-32 h-8 rounded-b-md cursor-pointer z-10' onClick={()=>{playlistToogle(playlist? false : true)}}>
         <span className={`h-[2px] w-1/2 bg-slate-400 duration-300 ${playlist ? 'translate-y-3' : ''}`}></span>
-        <span className={`h-[2px] w-1/2  shadow-[0_0_5px_1px_rgba(255,255,255,0.05)]  duration-300 ${playlist ? 'bg-red-400 shadow-red-400' : 'bg-lime-400 shadow-lime-600'}`}></span>
+        <span className={`h-[2px] w-1/2  shadow-[0_0_5px_1px_rgba(255,255,255,0.05)]  duration-300 ${playlist ? 'bg-red-400 shadow-red-400' : 'bg-lime-400 shadow-lime-400'}`}></span>
         <span className={`h-[2px] w-1/2 bg-slate-400 duration-300 ${playlist ? '-translate-y-3' : ''}`}></span>
       </div>
       <div className={`rounded-full w-52 h-52 bg-black flex flex-col items-center justify-center relative ${ isPlaying && 'animate-lazySpin' }`}>
-        <Image className='rounded-full' src={currentTrack.img} alt={currentTrack.author} width={160} height={160} />
+        <Image className='object-fill rounded-full' src={currentTrack.img} alt={currentTrack.author} width={160} height={160} />
         <div className={`rounded-full w-10 h-10 outline outline-1 outline-white  absolute border-black border-8 bg-slate-300`}></div>
       </div>
       <div className='w-3/4'>
-        <div className={`text-slate-300 text-md text-center ${ isPlaying && 'animate-bounce' }`}>{currentTrack.title}</div>
+        <div className={`text-slate-300 text-xl text-center ${ isPlaying && 'animate-bounce' }`}>{currentTrack.title}</div>
+        <div className={`text-slate-400 text-sm text-center ${ isPlaying && 'animate-bounce' }`}>{currentTrack.author}</div>
       </div>
       <audio ref={trackRef} src={currentTrack.src} type='audio/mp3' onTimeUpdate={onPlaying} onEnded={nextTrack} />
       <div className='w-10/12 flex flex-col'>
@@ -199,15 +220,15 @@ function Player() {
         </div>
       </div>
       <div className='flex w-full items-center max-w-md justify-between mt-8 mb-4 px-10'>
-        <button className='opacity-60  cursor-pointer p-0 w-16 h-16 duration-200 hover:scale-110 active:opacity-50' onClick={prevTrack}>
+        <button className='opacity-60  cursor-pointer p-0 w-12 h-12 duration-200 hover:scale-110 active:opacity-50' onClick={prevTrack}>
           <Image className='invert' src={prevImg} alt='prev track' />
         </button>
-        <button className='opacity-60 cursor-pointer p-0 w-20 h-20 rounded-full shadow-xl shadow-black bg-slate-300/20  duration-200 flex items-center justify-center hover:scale-110 active:opacity-50'>
+        <button className='opacity-60 cursor-pointer p-0 w-20 h-20 border-white border rounded-full shadow-xl shadow-black bg-black/40  duration-200 flex items-center justify-center hover:scale-110 active:opacity-50'>
 
-          {isPlaying ? <Image className='invert' onClick={setPaused} src={pauseImg} alt='pause' width='56' height='auto' /> : <Image className='invert' onClick={setPlaying} src={playImg} alt='play' width='56' height='auto' />}
+          {isPlaying ? <Image className='invert' onClick={setPaused} src={pauseImg} alt='pause' width='46' height='auto' /> : <Image className='invert' onClick={setPlaying} src={playImg} alt='play' width='46' height='auto' />}
 
         </button>
-        <button className='opacity-60  cursor-pointer p-0 w-16 h-16 duration-200 hover:scale-110 active:opacity-50' onClick={nextTrack}>
+        <button className='opacity-60  cursor-pointer p-0 w-12 h-12 duration-200 hover:scale-110 active:opacity-50' onClick={nextTrack}>
           <Image className='rotate-180 invert' src={prevImg} alt='next track' />
         </button>
       </div>
