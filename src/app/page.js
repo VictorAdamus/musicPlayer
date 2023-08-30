@@ -1,7 +1,7 @@
 'use client'
 import { store } from './store/store.js'
 import { Provider } from 'react-redux'
-import Player from './components/player.jsx'
+import Player from './Player.jsx'
 
 export default function Home() {
 

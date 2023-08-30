@@ -1,15 +1,15 @@
 import Image from 'next/image'
-import pauseImg from '../img/pause.png'
-import prevImg from '../img/prev.png'
-import playImg from '../img/play.png'
-import { backgrounds } from '../db/background.js'
+import pauseImg from './img/pause.png'
+import prevImg from './img/prev.png'
+import playImg from './img/play.png'
+import {backgrounds} from './db/background.js'
 
 import {useEffect, useRef, useState} from 'react'
 import {useSwipeable} from 'react-swipeable'
 
 import {useSelector, useDispatch} from 'react-redux'
-import {setCurrentTrack, setPlay, setPause, setPlaylist} from '../features/player/playerSlice'
-import Playlist from '../Playlist'
+import {setCurrentTrack, setPlay, setPause, setPlaylist} from './features/player/playerSlice'
+import Playlist from './components/Playlist'
 
 
 
@@ -17,11 +17,9 @@ function Player() {
 
   const handler = useSwipeable({
     onSwipedLeft: () => {nextTrack()},
-    onSwipedRight: () => {prevTrack()}
+    onSwipedRight: () => {prevTrack()},
+    onSwipedDown: ()=>{playlistToogle(true)},
   })
-
-
-
 
 
   const isPlaying = useSelector(state => state.player.isPlaying)
@@ -32,12 +30,11 @@ function Player() {
   const favoriteTracks = useSelector((state) => state.player.favoriteTracks)
 
   const randomBackground = (arr) => {
-    const randomColor = arr[Math.floor(Math.random()*arr.length)]
+    const randomColor = arr[Math.floor(Math.random() * arr.length)]
     return randomColor
   }
 
   const [color, setColor] = useState(backgrounds[0])
-  console.log(color);
 
   const dispatch = useDispatch()
 
@@ -66,6 +63,13 @@ function Player() {
   }, [currentTrack])
 
   const prevTrack = () => {
+    if(mixFavoriteTrack && favoriteTracks.length < 1) {
+      dispatch(setCurrentTrack(sounds[0]))
+      trackRef.current.currentTime = 0;
+      setPlaying()
+      setColor(randomBackground(backgrounds))
+      return
+    }
     const tracks = (mixFavoriteTrack ? favoriteTracks : sounds)
     const indexTrack = tracks.findIndex(tracks => tracks.title == currentTrack.title)
     if (indexTrack == 0) {
@@ -77,11 +81,20 @@ function Player() {
 
     trackRef.current.currentTime = 0;
     setPlaying()
+    setColor(randomBackground(backgrounds))
   }
 
   const nextTrack = () => {
+    if(mixFavoriteTrack && favoriteTracks.length < 1) {
+      dispatch(setCurrentTrack(sounds[0]))
+      trackRef.current.currentTime = 0;
+      setPlaying()
+      setColor(randomBackground(backgrounds))
+      return
+    }
     const tracks = (mixFavoriteTrack ? favoriteTracks : sounds)
     const indexTrack = tracks.findIndex(tracks => tracks.title == currentTrack.title)
+ 
     if (indexTrack == tracks.length - 1) {
       dispatch(setCurrentTrack(tracks[0]))
     } else {
@@ -101,8 +114,8 @@ function Player() {
 
   }
 
-  const playlistToogle = () => {
-    dispatch(setPlaylist())
+  const playlistToogle = (state) => {
+    dispatch(setPlaylist(state))
   }
 
   const checkWidth = (e) => {
@@ -146,35 +159,34 @@ function Player() {
 
 
   return (
-    <div {...handler} style={{overflowX: "scroll"}} className={`h-screen relative w-full max-h-min p-4 ${color} py-0 pb-10 flex flex-col justify-between  items-center shadow-xl`}>
-      <div className='flex flex-col items-center justify-center bg-gradient-to-r z-10 from-slate-900 via-blue-900 to-slate-900 w-32 h-12 rounded-b-xl bg-lime-300 cursor-pointer' onClick={playlistToogle}>
-        <span className='w-12 h-[2px] bg-slate-500 mb-1'></span>
-        <span className='w-12 h-[2px] bg-slate-500'></span>
-        <p className='text-slate-400 duration-300 hover:scale-110'>{playlist ? 'close' : 'playlist'}</p>
+    <div {...handler} style={{overflowX: "scroll"}} className={`h-[100%] min-h-[100vh] relative w-[100%] ${ color } py-0 pb-10 flex flex-col justify-between  items-center shadow-xl`}>
+      <div className='flex flex-col items-center justify-center gap-1 shadow-2xl shadow-black bg-slate-800/50 w-32 h-8 rounded-b-md cursor-pointer z-10' onClick={()=>{playlistToogle(playlist? false : true)}}>
+        <span className={`h-[2px] w-1/2 bg-slate-400 duration-300 ${playlist ? 'translate-y-3' : ''}`}></span>
+        <span className={`h-[2px] w-1/2  shadow-[0_0_5px_1px_rgba(255,255,255,0.05)]  duration-300 ${playlist ? 'bg-red-400 shadow-red-400' : 'bg-lime-400 shadow-lime-600'}`}></span>
+        <span className={`h-[2px] w-1/2 bg-slate-400 duration-300 ${playlist ? '-translate-y-3' : ''}`}></span>
       </div>
-      <div className='text-sm mb-4'>Now Playing</div>
       <div className={`rounded-full w-52 h-52 bg-black flex flex-col items-center justify-center relative ${ isPlaying && 'animate-lazySpin' }`}>
         <Image className='rounded-full' src={currentTrack.img} alt={currentTrack.author} width={160} height={160} />
-        <div className={`rounded-full w-8 h-8  absolute border border-black bg-purple-200`}></div>
+        <div className={`rounded-full w-10 h-10 outline outline-1 outline-white  absolute border-black border-8 bg-slate-300`}></div>
       </div>
-      <div className='w-2/3 mt-24'>
-        <div className={`text-slate-400 text-md text-center ${ isPlaying && 'animate-bounce' }`}>{currentTrack.title}</div>
+      <div className='w-3/4'>
+        <div className={`text-slate-300 text-md text-center ${ isPlaying && 'animate-bounce' }`}>{currentTrack.title}</div>
       </div>
       <audio ref={trackRef} src={currentTrack.src} type='audio/mp3' onTimeUpdate={onPlaying} onEnded={nextTrack} />
       <div className='w-10/12 flex flex-col'>
         <div className="flex w-full h-12 justify-start items-end gap-1 mb-4">
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-fuchsia-400 via-purple-600 to-violet-500 shadow-2xl shadow-fuchsia-400 ${ isPlaying && 'animate-upDown1' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-lime-300 via-green-500 to-emerald-500 shadow-2xl shadow-lime-400 ${ isPlaying && 'animate-upDown2' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-teal-300 via-cyan-500 to-sky-400 shadow-2xl shadow-teal-300 ${ isPlaying && 'animate-upDown3' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-pink-400 via-rose-500 to-fuchsia-600 shadow-2xl shadow-pink-300 ${ isPlaying && 'animate-upDown4' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-400 shadow-2xl shadow-yellow-300 ${ isPlaying && 'animate-upDown5' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-fuchsia-400 via-purple-600 to-violet-500 shadow-2xl shadow-fuchsia-400 ${ isPlaying && 'animate-upDown1' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-fuchsia-400 via-purple-600 to-violet-500 shadow-2xl shadow-fuchsia-400 ${ isPlaying && 'animate-upDown1' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-lime-300 via-green-500 to-emerald-500 shadow-2xl shadow-lime-400 ${ isPlaying && 'animate-upDown2' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-teal-300 via-cyan-500 to-sky-400 shadow-2xl shadow-teal-300 ${ isPlaying && 'animate-upDown3' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-pink-400 via-rose-500 to-fuchsia-600 shadow-2xl shadow-pink-300 ${ isPlaying && 'animate-upDown4' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-400 shadow-2xl shadow-yellow-300 ${ isPlaying && 'animate-upDown5' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-gradient-to-r from-fuchsia-400 via-purple-600 to-violet-500 shadow-2xl shadow-fuchsia-400 ${ isPlaying && 'animate-upDown1' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-slate-100 ${ isPlaying && 'animate-upDown1' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-stone-100 ${ isPlaying && 'animate-upDown2' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-red-100 ${ isPlaying && 'animate-upDown3' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-orange-100 ${ isPlaying && 'animate-upDown4' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-yellow-100 ${ isPlaying && 'animate-upDown5' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-lime-100  ${ isPlaying && 'animate-upDown1' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-teal-100 ${ isPlaying && 'animate-upDown1' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-cyan-100  ${ isPlaying && 'animate-upDown2' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-blue-100 ${ isPlaying && 'animate-upDown3' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-purple-100 ${ isPlaying && 'animate-upDown4' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-fuchsia-100 ${ isPlaying && 'animate-upDown5' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-pink-100  ${ isPlaying && 'animate-upDown1' }`}></div>
         </div>
         <div className='flex h-1 bg-gray-600 rounded-lg items-center justify-start cursor-pointer' onClick={checkWidth} ref={clickRef} >
           <div className='h-1 bg-sky-700 rounded-lg opacity-100 relative' style={{width: `${ currentTrack.progress + '%' }`}}>
@@ -190,7 +202,7 @@ function Player() {
         <button className='opacity-60  cursor-pointer p-0 w-16 h-16 duration-200 hover:scale-110 active:opacity-50' onClick={prevTrack}>
           <Image className='invert' src={prevImg} alt='prev track' />
         </button>
-        <button className='opacity-60 cursor-pointer p-0 w-20 h-20 rounded-full bg-gradient-to-r from-blue-400 from-5% via-blue-800 via-40% to-gray-900 to-90% duration-200 flex items-center justify-center hover:scale-110 active:opacity-50'>
+        <button className='opacity-60 cursor-pointer p-0 w-20 h-20 rounded-full shadow-xl shadow-black bg-slate-300/20  duration-200 flex items-center justify-center hover:scale-110 active:opacity-50'>
 
           {isPlaying ? <Image className='invert' onClick={setPaused} src={pauseImg} alt='pause' width='56' height='auto' /> : <Image className='invert' onClick={setPlaying} src={playImg} alt='play' width='56' height='auto' />}
 

@@ -1,15 +1,16 @@
 'use client'
 
 import Image from 'next/image'
-import {useDispatch, useSelector} from 'react-redux'
-import {setCurrentTrack, setPlay, setTracksMix, setTracksStart, setTracksFavorite, addToFavoriteTrack, removeFavoriteTrack, setPlaylist} from './features/player/playerSlice'
+import favoriteTrackOff from '../../../public/icons/favoriteOff.png'
 
-import favoriteTrackOn from '../../public/icons/favoriteOn.png'
-import favoriteTrackOff from '../../public/icons/favoriteOff.png'
+import {useDispatch, useSelector} from 'react-redux'
+import {setCurrentTrack, setPlay, setTracksMix, setTracksStart, setTracksFavorite, addToFavoriteTrack, removeFavoriteTrack, setPlaylist} from '../features/player/playerSlice'
 
 
 
 function Playlist() {
+
+
 
   const currentTrack = useSelector((state) => state.player.currentTrack)
   const tracks = useSelector((state) => state.player.tracks)
@@ -51,12 +52,12 @@ function Playlist() {
     const index = arr.findIndex(item => item.title === title)
     dispatch(setCurrentTrack(tracks[index]))
     setPlaying()
-    setTimeout(()=>{playlistToggle()}, 3000)
+    setTimeout(()=>{playlistToggle(false)}, 1000)
     
   }
 
   return (
-    <div className={`container max-w-md p-4 pt-12 pb-14 absolute top-0 rounded-xl flex flex-col justify-start items-center bg-gradient-to-r from-cyan-900 from-20% via-sky-800 to-indigo-900  duration-500 shadow-inner shadow-black ${ playlist ? 'h-[45%] opacity-100' : 'h-[0%] opacity-0' }`}>
+    <div className={`container max-w-md p-4 pt-12 pb-14 absolute top-0 rounded-b-xl flex flex-col justify-start items-center bg-slate-700/80 duration-500 shadow-2xl shadow-black ${ playlist ? 'h-[45%] opacity-100' : 'h-[0%] opacity-0' }`}>
       <div className='scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-800 container max-w-md mx-auto mt-2 grid gap-4 overflow-y-scroll'>
         {(mixFavoriteTrack ? favoriteTracks : tracks).map((track) => ( 
           <div className={`flex items-center text-white cursor-pointer mr-4 text-xs rounded-3xl hover:opacity-30 ${ track.title === currentTrack.title ? 'bg-slate-800/60' : '' }`} key={track.id}>
@@ -65,7 +66,7 @@ function Playlist() {
             {track?.title}
             </div>
             <div className='ml-auto mr-5 p-2' onClick={() => {track.favorite? removeTrackFavorite(track.id): addTrackFavorite(track.id)}}>
-              <Image src={track.favorite ? favoriteTrackOn : favoriteTrackOff} alt='checkbox' width='15' height='15' />
+              <Image className={`${track.favorite ? 'invert-[.50] sepia-[.90] hue-rotate-60' : ''}`} src={favoriteTrackOff} alt='checkbox' width='15' height='15' />
             </div>
           </div>
         ))}

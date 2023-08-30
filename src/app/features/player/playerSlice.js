@@ -17,8 +17,8 @@ export const playerSlice = createSlice({
     name: 'player',
     initialState,
     reducers: {
-        setPlaylist: (state) => {
-            state.playlist = !state.playlist
+        setPlaylist: (state, action) => {
+            state.playlist = action.payload
         },
         setPlay: (state) => {
             state.isPlaying = true
