@@ -2,7 +2,9 @@ import Image from 'next/image'
 import pauseImg from '../img/pause.png'
 import prevImg from '../img/prev.png'
 import playImg from '../img/play.png'
-import {useEffect, useRef} from 'react'
+import { backgrounds } from '../db/background.js'
+
+import {useEffect, useRef, useState} from 'react'
 import {useSwipeable} from 'react-swipeable'
 
 import {useSelector, useDispatch} from 'react-redux'
@@ -20,13 +22,22 @@ function Player() {
 
 
 
+
+
   const isPlaying = useSelector(state => state.player.isPlaying)
   const currentTrack = useSelector(state => state.player.currentTrack)
   const sounds = useSelector(state => state.player.tracks)
   const playlist = useSelector((state) => state.player.playlist)
   const mixFavoriteTrack = useSelector((state) => state.player.mixFavoriteTrack)
-  const favoriteTracks = useSelector((state)=> state.player.favoriteTracks)
+  const favoriteTracks = useSelector((state) => state.player.favoriteTracks)
 
+  const randomBackground = (arr) => {
+    const randomColor = arr[Math.floor(Math.random()*arr.length)]
+    return randomColor
+  }
+
+  const [color, setColor] = useState(backgrounds[0])
+  console.log(color);
 
   const dispatch = useDispatch()
 
@@ -54,7 +65,6 @@ function Player() {
     secRefEnd.current.textContent = trackSec(trackRef.current.duration)
   }, [currentTrack])
 
-
   const prevTrack = () => {
     const tracks = (mixFavoriteTrack ? favoriteTracks : sounds)
     const indexTrack = tracks.findIndex(tracks => tracks.title == currentTrack.title)
@@ -80,6 +90,7 @@ function Player() {
 
     trackRef.current.currentTime = 0;
     setPlaying()
+    setColor(randomBackground(backgrounds))
   }
 
   const onPlaying = () => {
@@ -135,8 +146,12 @@ function Player() {
 
 
   return (
-    <div {...handler} style={{overflowX: "scroll"}} className={` h-screen relative w-full max-h-min p-4 py-10 pb-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-400 from-5% via-indigo-800  via-40%  to-black to-80% flex flex-col justify-between  items-center shadow-xl`}>
-
+    <div {...handler} style={{overflowX: "scroll"}} className={`h-screen relative w-full max-h-min p-4 ${color} py-0 pb-10 flex flex-col justify-between  items-center shadow-xl`}>
+      <div className='flex flex-col items-center justify-center bg-gradient-to-r z-10 from-slate-900 via-blue-900 to-slate-900 w-32 h-12 rounded-b-xl bg-lime-300 cursor-pointer' onClick={playlistToogle}>
+        <span className='w-12 h-[2px] bg-slate-500 mb-1'></span>
+        <span className='w-12 h-[2px] bg-slate-500'></span>
+        <p className='text-slate-400 duration-300 hover:scale-110'>{playlist ? 'close' : 'playlist'}</p>
+      </div>
       <div className='text-sm mb-4'>Now Playing</div>
       <div className={`rounded-full w-52 h-52 bg-black flex flex-col items-center justify-center relative ${ isPlaying && 'animate-lazySpin' }`}>
         <Image className='rounded-full' src={currentTrack.img} alt={currentTrack.author} width={160} height={160} />
@@ -183,11 +198,6 @@ function Player() {
         <button className='opacity-60  cursor-pointer p-0 w-16 h-16 duration-200 hover:scale-110 active:opacity-50' onClick={nextTrack}>
           <Image className='rotate-180 invert' src={prevImg} alt='next track' />
         </button>
-      </div>
-      <div className='flex flex-col items-center justify-center bg-gradient-to-r z-10 from-slate-900 via-blue-900 to-slate-900 w-32 h-12 rounded-t-xl bg-lime-300 cursor-pointer' onClick={playlistToogle}>
-        <span className='w-12 h-[2px] bg-slate-500 mb-1'></span>
-        <span className='w-12 h-[2px] bg-slate-500'></span>
-        <p className='text-slate-400 duration-300 hover:scale-110'>{playlist? 'close' : 'playlist'}</p>
       </div>
       <Playlist />
     </div>

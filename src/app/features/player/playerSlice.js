@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-import {sounds} from "@/app/db/db.js";
+import {sounds} from "@/app/db/sounds.js";
 
 const initialState = {
     playlist: false,

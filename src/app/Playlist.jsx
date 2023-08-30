@@ -56,12 +56,7 @@ function Playlist() {
   }
 
   return (
-    <div className={`container max-w-md p-4 pt-4 pb-14 absolute bottom-0 rounded-xl flex flex-col justify-start items-center bg-gradient-to-r from-cyan-900 from-20% via-sky-800 to-indigo-900  duration-500 shadow-inner shadow-black ${ playlist ? 'h-[35%] opacity-100' : 'h-[0%] opacity-0' }`}>
-      <div className={`border border-gray-500  cursor-pointer flex items-center gap-8 justify-center w-fit p-2 `}>
-        <Image className={`${ mixStartTrack ? 'invert-[.50] sepia-[.90] hue-rotate-60' : '' }`} src='/icons/aA.png' alt='alphabet' width='20' height='20' onClick={trackMixStart} />
-        <Image className={`${ mixRandomTrack ? 'invert-[.50] sepia-[.90] hue-rotate-60' : '' }`} src='/icons/mix.png' alt='mix' width='20' height='20' onClick={trackMixRandom} />
-        <Image className={`${ mixFavoriteTrack ? 'invert-[.50] sepia-[.90] hue-rotate-60' : '' }`} src={favoriteTrackOff} alt='favorite' width='20' height='20' onClick={tracksMixFavorite} />
-      </div>
+    <div className={`container max-w-md p-4 pt-12 pb-14 absolute top-0 rounded-xl flex flex-col justify-start items-center bg-gradient-to-r from-cyan-900 from-20% via-sky-800 to-indigo-900  duration-500 shadow-inner shadow-black ${ playlist ? 'h-[45%] opacity-100' : 'h-[0%] opacity-0' }`}>
       <div className='scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-800 container max-w-md mx-auto mt-2 grid gap-4 overflow-y-scroll'>
         {(mixFavoriteTrack ? favoriteTracks : tracks).map((track) => ( 
           <div className={`flex items-center text-white cursor-pointer mr-4 text-xs rounded-3xl hover:opacity-30 ${ track.title === currentTrack.title ? 'bg-slate-800/60' : '' }`} key={track.id}>
@@ -74,6 +69,11 @@ function Playlist() {
             </div>
           </div>
         ))}
+      </div>
+      <div className={`border border-gray-500  cursor-pointer flex items-center gap-8 justify-center w-fit p-2 absolute bottom-2`}>
+        <Image className={`${ mixStartTrack ? 'invert-[.50] sepia-[.90] hue-rotate-60' : '' }`} src='/icons/aA.png' alt='alphabet' width='20' height='20' onClick={trackMixStart} />
+        <Image className={`${ mixRandomTrack ? 'invert-[.50] sepia-[.90] hue-rotate-60' : '' }`} src='/icons/mix.png' alt='mix' width='20' height='20' onClick={trackMixRandom} />
+        <Image className={`${ mixFavoriteTrack ? 'invert-[.50] sepia-[.90] hue-rotate-60' : '' }`} src={favoriteTrackOff} alt='favorite' width='20' height='20' onClick={tracksMixFavorite} />
       </div>
     </div>
   )
