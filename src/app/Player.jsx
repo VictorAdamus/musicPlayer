@@ -3,6 +3,7 @@ import pauseImg from './img/pause.png'
 import prevImg from './img/prev.png'
 import playImg from './img/play.png'
 import {backgrounds} from './db/background.js'
+import './Player.css'
 
 import {useEffect, useRef, useState} from 'react'
 import {useSwipeable} from 'react-swipeable'
@@ -14,9 +15,6 @@ import Playlist from './components/Playlist'
 
 
 function Player() {
-
-  const playListRef = useRef()
-
 
   const handler = useSwipeable({
     onSwipedLeft: () => {nextTrack()},
@@ -31,17 +29,6 @@ function Player() {
     }
   })
 
-
-
-      // if(eventData.event.target !== playListRef.current) {
-      //   playlistToogle(false)
-      //   console.log(eventData.event.target !== playListRef.current);
-      //   console.log('swipe');
-      // }
-
-
-
-
   const isPlaying = useSelector(state => state.player.isPlaying)
   const currentTrack = useSelector(state => state.player.currentTrack)
   const sounds = useSelector(state => state.player.tracks)
@@ -55,6 +42,8 @@ function Player() {
   }
 
   const [color, setColor] = useState(backgrounds[0])
+  const [animationPrev, setAnimationPrev] = useState(false)
+  const [animationNext, setAnimationNext] = useState(false)
 
   const dispatch = useDispatch()
 
@@ -87,6 +76,7 @@ function Player() {
       dispatch(setCurrentTrack(sounds[0]))
       trackRef.current.currentTime = 0;
       setPlaying()
+      setAnimationPrev(true)
       setColor(randomBackground(backgrounds))
       return
     }
@@ -101,6 +91,7 @@ function Player() {
 
     trackRef.current.currentTime = 0;
     setPlaying()
+    setAnimationPrev(true)
     setColor(randomBackground(backgrounds))
   }
 
@@ -109,6 +100,7 @@ function Player() {
       dispatch(setCurrentTrack(sounds[0]))
       trackRef.current.currentTime = 0;
       setPlaying()
+      setAnimationNext(true)
       setColor(randomBackground(backgrounds))
       return
     }
@@ -123,6 +115,7 @@ function Player() {
 
     trackRef.current.currentTime = 0;
     setPlaying()
+    setAnimationNext(true)
     setColor(randomBackground(backgrounds))
   }
 
@@ -179,7 +172,11 @@ function Player() {
 
 
   return (
-    <div {...handler} style={{overflowX: "scroll"}} className={`h-[100%] min-h-[100vh] relative w-[100%] ${ color } py-0 pb-10 flex flex-col justify-between  items-center shadow-xl`}>
+    <div {...handler} style={{overflowX: "scroll"}} className={`h-[100%] min-h-[100vh] relative w-[100%] ${ color } ${animationNext && 'fade-next'} ${animationPrev && 'fade-prev'}  py-0 pb-10 flex flex-col justify-between  items-center shadow-xl`}
+     onAnimationEnd={()=>{
+      setAnimationNext(false)
+      setAnimationPrev(false)
+      }}>
       <div className='flex flex-col items-center justify-center gap-1 shadow-2xl shadow-black bg-slate-800/50 w-32 h-8 rounded-b-md cursor-pointer z-10' onClick={()=>{playlistToogle(playlist? false : true)}}>
         <span className={`h-[2px] w-1/2 bg-slate-400 duration-300 ${playlist ? 'translate-y-3' : ''}`}></span>
         <span className={`h-[2px] w-1/2  shadow-[0_0_5px_1px_rgba(255,255,255,0.05)]  duration-300 ${playlist ? 'bg-red-400 shadow-red-400' : 'bg-lime-400 shadow-lime-400'}`}></span>
