@@ -20,11 +20,8 @@ export const playerSlice = createSlice({
         setPlaylist: (state, action) => {
             state.playlist = action.payload
         },
-        setPlay: (state) => {
-            state.isPlaying = true
-        },
-        setPause: (state) => {
-            state.isPlaying = false
+        togglePlay: (state, action) => {
+            state.isPlaying = action.payload
         },
         setCurrentTrack: (state, action) => {
             state.currentTrack = action.payload
@@ -62,5 +59,5 @@ export const playerSlice = createSlice({
     }
 })
 
-export const {setPlaylist, setCurrentTrack, setPlay, setPause, setTracksMix, setTracksStart, setTracksFavorite, addToFavoriteTrack, removeFavoriteTrack} = playerSlice.actions
+export const {setPlaylist, setCurrentTrack, togglePlay, setTracksMix, setTracksStart, setTracksFavorite, addToFavoriteTrack, removeFavoriteTrack} = playerSlice.actions
 export default playerSlice.reducer

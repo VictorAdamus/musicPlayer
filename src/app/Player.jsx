@@ -5,11 +5,11 @@ import playImg from './img/play.png'
 import {backgrounds} from './db/background.js'
 import './Player.css'
 
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState, useCallback} from 'react'
 import {useSwipeable} from 'react-swipeable'
 
 import {useSelector, useDispatch} from 'react-redux'
-import {setCurrentTrack, setPlay, setPause, setPlaylist} from './features/player/playerSlice'
+import {setCurrentTrack, togglePlay, setPlaylist} from './features/player/playerSlice'
 import Playlist from './components/Playlist'
 
 
@@ -57,12 +57,16 @@ function Player() {
 
 
   const setPlaying = () => {
-    dispatch(setPlay())
+    dispatch(togglePlay(true))
   }
 
   const setPaused = () => {
-    dispatch(setPause())
+    dispatch(togglePlay(false))
   }
+
+  const toggleCurrentTrack = useCallback((track)=> {
+    dispatch(setCurrentTrack(track))
+  },[dispatch])
 
   useEffect(() => {
     minRefStart.current.textContent = trackMin(trackRef.current.currentTime)
@@ -73,7 +77,7 @@ function Player() {
 
   const prevTrack = () => {
     if(mixFavoriteTrack && favoriteTracks.length < 1) {
-      dispatch(setCurrentTrack(sounds[0]))
+      toggleCurrentTrack(sounds[0])
       trackRef.current.currentTime = 0;
       setPlaying()
       setAnimationPrev(true)
@@ -83,10 +87,10 @@ function Player() {
     const tracks = (mixFavoriteTrack ? favoriteTracks : sounds)
     const indexTrack = tracks.findIndex(tracks => tracks.title == currentTrack.title)
     if (indexTrack == 0) {
-      dispatch(setCurrentTrack(tracks[tracks.length - 1]))
+      toggleCurrentTrack(tracks[tracks.length - 1])
     } else {
 
-      dispatch(setCurrentTrack(tracks[indexTrack - 1]))
+      toggleCurrentTrack(tracks[indexTrack - 1])
     }
 
     trackRef.current.currentTime = 0;
@@ -97,7 +101,7 @@ function Player() {
 
   const nextTrack = () => {
     if(mixFavoriteTrack && favoriteTracks.length < 1) {
-      dispatch(setCurrentTrack(sounds[0]))
+      toggleCurrentTrack(sounds[0])
       trackRef.current.currentTime = 0;
       setPlaying()
       setAnimationNext(true)
@@ -108,9 +112,9 @@ function Player() {
     const indexTrack = tracks.findIndex(tracks => tracks.title == currentTrack.title)
  
     if (indexTrack == tracks.length - 1) {
-      dispatch(setCurrentTrack(tracks[0]))
+      toggleCurrentTrack(tracks[0])
     } else {
-      dispatch(setCurrentTrack(tracks[indexTrack + 1]))
+      toggleCurrentTrack(tracks[indexTrack + 1])
     }
 
     trackRef.current.currentTime = 0;
@@ -119,13 +123,11 @@ function Player() {
     setColor(randomBackground(backgrounds))
   }
 
-  const onPlaying = () => {
+  const onPlaying = useCallback(() => {
     const duration = trackRef.current.duration;
     const curTime = trackRef.current.currentTime;
-
-    dispatch(setCurrentTrack({...currentTrack, 'progress': curTime / duration * 100, length: duration}))
-
-  }
+    toggleCurrentTrack({...currentTrack, 'progress': curTime / duration * 100, length: duration});
+  }, [currentTrack, toggleCurrentTrack, trackRef])
 
   const playlistToogle = (state) => {
     dispatch(setPlaylist(state))
@@ -162,6 +164,8 @@ function Player() {
     return minutes
   }
 
+  console.log('render');
+
   useEffect(() => {
     if (isPlaying) {
       trackRef.current.play();
@@ -172,39 +176,39 @@ function Player() {
 
 
   return (
-    <div {...handler} style={{overflowX: "scroll"}} className={`h-[100%] min-h-[100vh] relative w-[100%] ${ color } ${animationNext && 'fade-next'} ${animationPrev && 'fade-prev'}  py-0 pb-10 flex flex-col justify-between  items-center shadow-xl`}
-     onAnimationEnd={()=>{
-      setAnimationNext(false)
-      setAnimationPrev(false)
-      }}>
-      <div className='flex flex-col items-center justify-center gap-1 shadow-2xl shadow-black bg-slate-800/50 w-32 h-8 rounded-b-md cursor-pointer z-10' onClick={()=>{playlistToogle(playlist? false : true)}}>
+    <div {...handler} style={{overflowX: "scroll"}} className={`h-[100%] min-h-[100vh] relative w-[100%] ${ color } py-0 pb-10 flex flex-col justify-between  items-center shadow-xl`}>
+      <div className={`flex flex-col items-center justify-center gap-1 shadow-2xl shadow-black bg-slate-800/50 w-32 h-8 rounded-b-md cursor-pointer z-10`} onClick={()=>{playlistToogle(playlist? false : true)}}>
         <span className={`h-[2px] w-1/2 bg-slate-400 duration-300 ${playlist ? 'translate-y-3' : ''}`}></span>
         <span className={`h-[2px] w-1/2  shadow-[0_0_5px_1px_rgba(255,255,255,0.05)]  duration-300 ${playlist ? 'bg-red-400 shadow-red-400' : 'bg-lime-400 shadow-lime-400'}`}></span>
         <span className={`h-[2px] w-1/2 bg-slate-400 duration-300 ${playlist ? '-translate-y-3' : ''}`}></span>
       </div>
-      <div className={`rounded-full w-52 h-52 bg-black flex flex-col items-center justify-center relative ${ isPlaying && 'animate-lazySpin' }`}>
+      <div className={`${animationNext && 'fade-next'} ${animationPrev && 'fade-prev'} rounded-full w-52 h-52 bg-black flex flex-col items-center justify-center relative ${ (isPlaying && trackRef.current.currentTime) && 'animate-lazySpin' }`}  onAnimationEnd={()=>{
+      setAnimationNext(false)
+      setAnimationPrev(false)}}>
         <Image className='object-fill rounded-full' src={currentTrack.img} alt={currentTrack.author} width={160} height={160} />
         <div className={`rounded-full w-10 h-10 outline outline-1 outline-white  absolute border-black border-8 bg-slate-300`}></div>
       </div>
-      <div className='w-3/4'>
-        <div className={`text-slate-300 text-xl text-center ${ isPlaying && 'animate-bounce' }`}>{currentTrack.title}</div>
-        <div className={`text-slate-400 text-sm text-center ${ isPlaying && 'animate-bounce' }`}>{currentTrack.author}</div>
+      <div className={`${animationNext && 'fade-next'} ${animationPrev && 'fade-prev'} w-3/4`} onAnimationEnd={()=>{
+      setAnimationNext(false)
+      setAnimationPrev(false)}}>
+        <div className={`text-slate-300 text-xl text-center ${ (isPlaying && trackRef.current.currentTime) && 'animate-bounce' }`}>{currentTrack.title}</div>
+        <div className={`text-slate-400 text-sm text-center ${ (isPlaying && trackRef.current.currentTime) && 'animate-bounce' }`}>{currentTrack.author}</div>
       </div>
       <audio ref={trackRef} src={currentTrack.src} type='audio/mp3' onTimeUpdate={onPlaying} onEnded={nextTrack} />
       <div className='w-10/12 flex flex-col'>
         <div className="flex w-full h-12 justify-start items-end gap-1 mb-4">
-          <div className={`w-1/12 h-0 opacity-20 bg-slate-100 ${ isPlaying && 'animate-upDown1' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-stone-100 ${ isPlaying && 'animate-upDown2' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-red-100 ${ isPlaying && 'animate-upDown3' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-orange-100 ${ isPlaying && 'animate-upDown4' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-yellow-100 ${ isPlaying && 'animate-upDown5' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20  bg-lime-100  ${ isPlaying && 'animate-upDown1' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20  bg-teal-100 ${ isPlaying && 'animate-upDown1' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20  bg-cyan-100  ${ isPlaying && 'animate-upDown2' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20  bg-blue-100 ${ isPlaying && 'animate-upDown3' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20 bg-purple-100 ${ isPlaying && 'animate-upDown4' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20  bg-fuchsia-100 ${ isPlaying && 'animate-upDown5' }`}></div>
-          <div className={`w-1/12 h-0 opacity-20  bg-pink-100  ${ isPlaying && 'animate-upDown1' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-slate-100 ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown1' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-stone-100 ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown2' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-red-100 ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown3' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-orange-100 ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown4' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-yellow-100 ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown5' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-lime-100  ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown1' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-teal-100 ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown1' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-cyan-100  ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown2' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-blue-100 ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown3' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20 bg-purple-100 ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown4' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-fuchsia-100 ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown5' }`}></div>
+          <div className={`w-1/12 h-0 opacity-20  bg-pink-100  ${ (isPlaying && trackRef.current.currentTime) && 'animate-upDown1' }`}></div>
         </div>
         <div className='flex h-1 bg-gray-600 rounded-lg items-center justify-start cursor-pointer' onClick={checkWidth} ref={clickRef} >
           <div className='h-1 bg-sky-700 rounded-lg opacity-100 relative' style={{width: `${ currentTrack.progress + '%' }`}}>
