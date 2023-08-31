@@ -4,7 +4,7 @@ import Image from 'next/image'
 import favoriteTrackOff from '../../../public/icons/favoriteOff.png'
 
 import {useDispatch, useSelector} from 'react-redux'
-import {setCurrentTrack, setPlay, setTracksMix, setTracksStart, setTracksFavorite, addToFavoriteTrack, removeFavoriteTrack, setPlaylist} from '../features/player/playerSlice'
+import {setCurrentTrack, togglePlay, setTracksMix, setTracksStart, setTracksFavorite, addToFavoriteTrack, removeFavoriteTrack, setPlaylist} from '../features/player/playerSlice'
 
 
 
@@ -22,7 +22,7 @@ function Playlist() {
 
   const dispatch = useDispatch()
   const setPlaying = () => {
-    dispatch(setPlay())
+    dispatch(togglePlay(true))
   }
 
   const tracksMixFavorite = () => {
